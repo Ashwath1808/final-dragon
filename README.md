@@ -102,7 +102,7 @@ All settings are stored in `config.json` and can be edited either directly or th
     "openai_api_key": "",
     "news_api_key": "7e6cbb87a9934eb0813db23e14c914c6",
     "email_sender": "ashwathalagond685@gmail.com",
-    "email_password": "lnqi oiov qwsq pyym",
+    "email_password": "***************",
     "alert_recipients": [
         "ashwathalagond17@gmail.com",
         "aswathashu863@gmail.com"
