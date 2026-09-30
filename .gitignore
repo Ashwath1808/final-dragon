@@ -1,3 +1,4 @@
 envDragon/__pycache__/
 *.pyc
 envDragon/
+config.json
