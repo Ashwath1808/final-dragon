@@ -1,0 +1,20 @@
+{
+    "assistant_name": "Dragon",
+    "wake_word": "dragon",
+    "safe_word": "help me",
+    "auto_listen": true,
+    "voice_index": 0,
+    "speech_rate": 175,
+    "speech_volume": 1,
+    "tts_enabled": true,
+    "openai_api_key": "",
+    "news_api_key": "7e6cbb87a9934eb0813db23e14c914c6",
+    "email_sender": "ashwathalagond17@gmail.com",
+    "email_password": "lkdw kxad fuwv ihih",
+    "alert_recipients": [
+        "ashwathalagond685@gmail.com",
+        "aswathashu863@gmail.com",
+        "vikiccha2105@gmail.com"
+    ],
+    "theme": "void-purple"
+}

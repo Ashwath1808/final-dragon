@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyber-blue">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon AI Core // Next-Gen Desktop Assistant</title>
+    <link rel="shortcut icon" href="assets/img/sophia.ico">
+
+    <!-- Google Fonts for Futuristic Cyberpunk Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (Local Vendor) -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Animate.css (Local Vendor) -->
+    <link rel="stylesheet" href="assets/vendore/texllate/animate.css">
+    
+    <!-- Custom Cyberpunk HUD Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-cyber-blue">
+
+    <!-- Background Tech Grid & Particle Canvas -->
+    <div class="cyber-grid-overlay"></div>
+    <div class="cyber-scanlines"></div>
+    <div class="ambient-glow-circle glow-top-left"></div>
+    <div class="ambient-glow-circle glow-bottom-right"></div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="hud-container d-flex flex-column justify-content-between">
+
+        <!-- TOP HUD NAVIGATION BAR -->
+        <header class="hud-header d-flex justify-content-between align-items-center px-4 py-2">
+            <!-- Left: Logo & Core Brand -->
+            <div class="brand-zone d-flex align-items-center gap-3">
+                <div class="brand-emblem-wrap">
+                    <i class="bi bi-shield-shaded brand-icon"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title m-0">DRAGON <span class="neon-badge">AI v2.0</span></h1>
+                    <div class="brand-subtitle">NEURAL DESKTOP CORE // ONLINE</div>
+                </div>
+            </div>
+
+            <!-- Center: Status Capsule -->
+            <div class="status-zone">
+                <div class="status-capsule d-flex align-items-center gap-2" id="assistantStatusBadge">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="assistantStateText">SYSTEM STANDBY</span>
+                </div>
+            </div>
+
+            <!-- Right: Real-time Clock & Control Icons -->
+            <div class="controls-zone d-flex align-items-center gap-3">
+                <div class="hud-clock text-end d-none d-md-block">
+                    <div id="liveClock" class="clock-digits">00:00:00</div>
+                    <div id="liveDate" class="clock-date">LOADING DATE...</div>
+                </div>
+
+                <div class="hud-button-group d-flex gap-2">
+                    <!-- Continuous Listen Toggle -->
+                    <button class="hud-btn" id="btnToggleAutoListen" title="Toggle Auto-Listen (Wake Word Mode)">
+                        <i class="bi bi-mic"></i>
+                        <span class="btn-badge" id="autoListenBadge">OFF</span>
+                    </button>
+
+                    <!-- Voice Audio Mute/Unmute -->
+                    <button class="hud-btn" id="btnToggleMuteTTS" title="Toggle Speech Audio">
+                        <i class="bi bi-volume-up-fill" id="muteIcon"></i>
+                    </button>
+
+                    <!-- System Diagnostics Modal Button -->
+                    <button class="hud-btn" id="btnOpenSystemHUD" data-bs-toggle="modal" data-bs-target="#systemModal" title="System Diagnostics">
+                        <i class="bi bi-cpu"></i>
+                    </button>
+
+                    <!-- Command Hub Drawer Button -->
+                    <button class="hud-btn" id="btnOpenCommandHub" data-bs-toggle="offcanvas" data-bs-target="#commandHubDrawer" title="Dragon Command Hub">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </button>
+
+                    <!-- Chat History Drawer Button -->
+                    <button class="hud-btn" id="btnOpenChatHistory" data-bs-toggle="offcanvas" data-bs-target="#chatHistoryDrawer" title="Conversation Logs">
+                        <i class="bi bi-chat-left-text-fill"></i>
+                    </button>
+
+                    <!-- Settings Modal Button -->
+                    <button class="hud-btn" id="btnOpenSettings" data-bs-toggle="modal" data-bs-target="#settingsModal" title="Configuration">
+                        <i class="bi bi-gear-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- CENTER STAGE: HOLOGRAPHIC DRAGON ARC REACTOR -->
+        <main class="reactor-stage text-center position-relative my-auto">
+            <!-- Reactor Ring Complex -->
+            <div class="reactor-outer-ring" id="dragonCoreReactor" title="Click Core to Activate Voice Listening!">
+                <!-- Outer Tech Ticks & Marks Ring -->
+                <div class="ring-tick-layer"></div>
+                <!-- Outer Gyroscopic Ring -->
+                <div class="ring-orbit-layer"></div>
+                <!-- Middle Pulse Energy Ring -->
+                <div class="ring-pulse-layer"></div>
+                <!-- Center Dragon Reactor Core -->
+                <div class="core-plasma-center">
+                    <div class="core-dragon-glyph">
+                        <i class="bi bi-cpu-fill core-glyph-icon" id="coreCenterIcon"></i>
+                    </div>
+                    <div class="core-glow-aura"></div>
+                </div>
+            </div>
+
+            <!-- SiriWave Sound Waveform Integration -->
+            <div class="siri-wave-wrapper my-2" id="siriWaveSection">
+                <div id="siri-container"></div>
+            </div>
+
+            <!-- Live Subtitle & Transcript Card -->
+            <div class="dialogue-hud-card mx-auto mt-2">
+                <div class="dialogue-tag">
+                    <i class="bi bi-terminal-fill me-1"></i> <span id="dialogueSpeaker">DRAGON SAYS</span>
+                </div>
+                <div class="dialogue-content" id="dialogueText">
+                    "Greetings. I am Dragon, your autonomous desktop companion. Click the core or type below to begin."
+                </div>
+            </div>
+
+            <!-- Quick Action Chips Bar -->
+            <div class="quick-chips-bar d-flex justify-content-center flex-wrap gap-2 mt-3 px-3">
+                <button class="quick-chip" data-action="weather"><i class="bi bi-cloud-sun"></i> Live Weather</button>
+                <button class="quick-chip" data-action="news"><i class="bi bi-newspaper"></i> Top News</button>
+                <button class="quick-chip" data-action="system"><i class="bi bi-activity"></i> System Health</button>
+                <button class="quick-chip" data-action="screenshot"><i class="bi bi-camera"></i> Screenshot</button>
+                <button class="quick-chip" data-action="youtube"><i class="bi bi-youtube"></i> Play Music</button>
+                <button class="quick-chip" data-action="wiki"><i class="bi bi-book"></i> Wikipedia</button>
+                <button class="quick-chip" data-action="joke"><i class="bi bi-emoji-laughing"></i> Tell Joke</button>
+                <button class="quick-chip" data-action="dice"><i class="bi bi-dice-5"></i> Roll Dice</button>
+                <button class="quick-chip chip-danger" data-action="emergency"><i class="bi bi-shield-exclamation"></i> Emergency SOS</button>
+            </div>
+        </main>
+
+
+        <!-- BOTTOM HUD COMMAND DECK (INPUT BAR) -->
+        <footer class="hud-footer px-4 pb-4">
+            <div class="command-deck mx-auto">
+                <div class="command-input-wrapper d-flex align-items-center">
+                    <div class="input-prompt-icon">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                    <input type="text" id="chatBox" class="command-input-field" placeholder="Type a command or query... (Press Enter to execute)" autocomplete="off">
+                    
+                    <!-- Clear Input Button -->
+                    <button id="btnClearInput" class="deck-btn deck-btn-ghost d-none" title="Clear text">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                    <!-- Interactive Voice Mic Button -->
+                    <button id="micBtn" class="deck-btn deck-btn-mic" title="Click to speak command">
+                        <i class="bi bi-mic-fill" id="micIcon"></i>
+                        <span class="mic-wave-ring"></span>
+                    </button>
+
+                    <!-- Send Command Button -->
+                    <button id="sendBtn" class="deck-btn deck-btn-send" title="Send command">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+
+                    <!-- Quick SOS Trigger -->
+                    <button id="sosQuickBtn" class="deck-btn deck-btn-sos" title="Trigger Emergency Alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </footer>
+
+    </div><!-- /hud-container -->
+
+
+    <!-- ==================== OFFCANVAS: CONVERSATION HISTORY LOG ==================== -->
+    <div class="offcanvas offcanvas-end cyber-offcanvas" tabindex="-1" id="chatHistoryDrawer" aria-labelledby="chatHistoryDrawerLabel">
+        <div class="offcanvas-header cyber-drawer-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-chat-left-dots-fill text-neon"></i>
+                <h5 class="offcanvas-title cyber-title" id="chatHistoryDrawerLabel">CONVERSATION LOGS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body cyber-drawer-body d-flex flex-column">
+            <!-- Messages Container -->
+            <div class="chat-logs-container flex-grow-1" id="chatLogsContainer">
+                <div class="chat-msg chat-dragon">
+                    <div class="msg-sender"><i class="bi bi-shield-shaded"></i> Dragon AI</div>
+                    <div class="msg-bubble">
+                        Welcome to Dragon Core v2.0. I am ready to assist with voice and text commands.
+                    </div>
+                    <div class="msg-timestamp">SYSTEM BOOT</div>
+                </div>
+            </div>
+            <!-- Drawer Actions Footer -->
+            <div class="chat-drawer-footer pt-3 d-flex justify-content-between">
+                <button class="cyber-btn cyber-btn-sm" id="btnClearChatHistory">
+                    <i class="bi bi-trash"></i> Clear Logs
+                </button>
+                <button class="cyber-btn cyber-btn-sm" id="btnExportChatLogs">
+                    <i class="bi bi-download"></i> Save Logs
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== OFFCANVAS: DRAGON COMMAND HUB ==================== -->
+    <div class="offcanvas offcanvas-start cyber-offcanvas" tabindex="-1" id="commandHubDrawer" aria-labelledby="commandHubDrawerLabel">
+        <div class="offcanvas-header cyber-drawer-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-grid-3x3-gap-fill text-neon"></i>
+                <h5 class="offcanvas-title cyber-title" id="commandHubDrawerLabel">COMMAND DIRECTORY</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body cyber-drawer-body">
+            <!-- Search Commands -->
+            <div class="command-search-wrap mb-3">
+                <input type="text" id="cmdSearchInput" class="form-control cyber-input" placeholder="Search commands...">
+            </div>
+
+            <!-- Categories Accordion / List -->
+            <div class="command-categories-wrap">
+                <!-- Group 1: Apps & Web -->
+                <div class="cmd-group mb-3">
+                    <h6 class="cmd-group-title"><i class="bi bi-window-stack"></i> Apps & Websites</h6>
+                    <div class="cmd-cards-grid">
+                        <div class="cmd-card" data-cmd="open notepad"><i class="bi bi-journal-text"></i> Open Notepad</div>
+                        <div class="cmd-card" data-cmd="open calculator"><i class="bi bi-calculator"></i> Open Calculator</div>
+                        <div class="cmd-card" data-cmd="open paint"><i class="bi bi-palette"></i> Open Paint</div>
+                        <div class="cmd-card" data-cmd="open vs code"><i class="bi bi-code-square"></i> Open VS Code</div>
+                        <div class="cmd-card" data-cmd="open task manager"><i class="bi bi-graph-up"></i> Task Manager</div>
+                        <div class="cmd-card" data-cmd="open github"><i class="bi bi-github"></i> Open GitHub</div>
+                        <div class="cmd-card" data-cmd="open youtube"><i class="bi bi-youtube"></i> Open YouTube</div>
+                        <div class="cmd-card" data-cmd="open spotify"><i class="bi bi-spotify"></i> Open Spotify</div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Intelligence & Information -->
+                <div class="cmd-group mb-3">
+                    <h6 class="cmd-group-title"><i class="bi bi-brain"></i> Knowledge & Search</h6>
+                    <div class="cmd-cards-grid">
+                        <div class="cmd-card" data-cmd="weather"><i class="bi bi-cloud-sun"></i> Weather Forecast</div>
+                        <div class="cmd-card" data-cmd="news"><i class="bi bi-newspaper"></i> Today's News</div>
+                        <div class="cmd-card" data-cmd="who is Albert Einstein"><i class="bi bi-search"></i> Wikipedia Search</div>
+                        <div class="cmd-card" data-cmd="what time is it"><i class="bi bi-clock"></i> Current Time & Date</div>
+                        <div class="cmd-card" data-cmd="calculate 250 * 4"><i class="bi bi-slash-circle"></i> Quick Math</div>
+                        <div class="cmd-card" data-cmd="play cyberpunk music on youtube"><i class="bi bi-play-circle"></i> Play on YouTube</div>
+                    </div>
+                </div>
+
+                <!-- Group 3: PC Controls -->
+                <div class="cmd-group mb-3">
+                    <h6 class="cmd-group-title"><i class="bi bi-sliders"></i> System & Hardware</h6>
+                    <div class="cmd-cards-grid">
+                        <div class="cmd-card" data-cmd="take screenshot"><i class="bi bi-camera"></i> Capture Screenshot</div>
+                        <div class="cmd-card" data-cmd="system status"><i class="bi bi-speedometer2"></i> System Diagnostics</div>
+                        <div class="cmd-card" data-cmd="volume up"><i class="bi bi-volume-up"></i> Volume Up</div>
+                        <div class="cmd-card" data-cmd="volume down"><i class="bi bi-volume-down"></i> Volume Down</div>
+                        <div class="cmd-card" data-cmd="volume mute"><i class="bi bi-volume-mute"></i> Mute Audio</div>
+                        <div class="cmd-card" data-cmd="lock computer"><i class="bi bi-lock"></i> Lock Workstation</div>
+                    </div>
+                </div>
+
+                <!-- Group 4: Fun & Tools -->
+                <div class="cmd-group mb-3">
+                    <h6 class="cmd-group-title"><i class="bi bi-controller"></i> Fun & Random</h6>
+                    <div class="cmd-cards-grid">
+                        <div class="cmd-card" data-cmd="tell me a joke"><i class="bi bi-emoji-smile"></i> Tell a Joke</div>
+                        <div class="cmd-card" data-cmd="flip a coin"><i class="bi bi-coin"></i> Flip a Coin</div>
+                        <div class="cmd-card" data-cmd="roll a dice"><i class="bi bi-dice-6"></i> Roll a Dice</div>
+                    </div>
+                </div>
+
+                <!-- Group 5: Safety -->
+                <div class="cmd-group mb-3">
+                    <h6 class="cmd-group-title text-danger"><i class="bi bi-shield-exclamation"></i> Emergency Safety</h6>
+                    <div class="cmd-cards-grid">
+                        <div class="cmd-card cmd-card-danger" data-cmd="help me"><i class="bi bi-exclamation-diamond"></i> Trigger SOS Alert</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MODAL: SYSTEM DIAGNOSTICS HUD ==================== -->
+    <div class="modal fade cyber-modal" id="systemModal" tabindex="-1" aria-labelledby="systemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content cyber-modal-content">
+                <div class="modal-header cyber-modal-header">
+                    <h5 class="modal-title cyber-title" id="systemModalLabel"><i class="bi bi-cpu-fill text-neon"></i> SYSTEM TELEMETRY HUD</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body cyber-modal-body">
+                    <!-- Gauge Grid -->
+                    <div class="row g-3 text-center mb-4">
+                        <!-- CPU -->
+                        <div class="col-md-3 col-6">
+                            <div class="telemetry-card">
+                                <div class="telemetry-icon text-neon"><i class="bi bi-cpu"></i></div>
+                                <div class="telemetry-val" id="statCpuVal">0%</div>
+                                <div class="telemetry-label">CPU LOAD</div>
+                                <div class="progress cyber-progress mt-2">
+                                    <div class="progress-bar cyber-progress-bar" id="statCpuBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- RAM -->
+                        <div class="col-md-3 col-6">
+                            <div class="telemetry-card">
+                                <div class="telemetry-icon text-purple"><i class="bi bi-memory"></i></div>
+                                <div class="telemetry-val" id="statRamVal">0%</div>
+                                <div class="telemetry-label">RAM USAGE</div>
+                                <div class="progress cyber-progress mt-2">
+                                    <div class="progress-bar cyber-progress-bar bg-purple" id="statRamBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- DISK -->
+                        <div class="col-md-3 col-6">
+                            <div class="telemetry-card">
+                                <div class="telemetry-icon text-info"><i class="bi bi-hdd-network"></i></div>
+                                <div class="telemetry-val" id="statDiskVal">0%</div>
+                                <div class="telemetry-label">DISK (C:)</div>
+                                <div class="progress cyber-progress mt-2">
+                                    <div class="progress-bar cyber-progress-bar bg-info" id="statDiskBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BATTERY -->
+                        <div class="col-md-3 col-6">
+                            <div class="telemetry-card">
+                                <div class="telemetry-icon text-success"><i class="bi bi-battery-charging"></i></div>
+                                <div class="telemetry-val" id="statBatVal">100%</div>
+                                <div class="telemetry-label" id="statBatLabel">BATTERY</div>
+                                <div class="progress cyber-progress mt-2">
+                                    <div class="progress-bar cyber-progress-bar bg-success" id="statBatBar" role="progressbar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware Spec Details -->
+                    <div class="telemetry-details-card p-3">
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <span class="text-muted">OS Platform:</span> <strong id="specOS">Windows</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted">Hostname:</span> <strong id="specHost">PC</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted">Memory Used:</span> <strong id="specMem">0 / 0 GB</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted">System Uptime:</span> <strong id="specUptime">0 hrs</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer cyber-modal-footer">
+                    <button type="button" class="cyber-btn" id="btnRefreshDiagnostics">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Telemetry
+                    </button>
+                    <button type="button" class="cyber-btn cyber-btn-ghost" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MODAL: CONFIGURATION & SETTINGS ==================== -->
+    <div class="modal fade cyber-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content cyber-modal-content">
+                <div class="modal-header cyber-modal-header">
+                    <h5 class="modal-title cyber-title" id="settingsModalLabel"><i class="bi bi-sliders text-neon"></i> DRAGON CORE SETTINGS</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body cyber-modal-body">
+                    <!-- Nav Tabs for Settings -->
+                    <ul class="nav nav-pills cyber-nav-pills mb-3" id="settingsTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="tab-general-btn" data-bs-toggle="pill" data-bs-target="#tab-general" type="button">General</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="tab-voice-btn" data-bs-toggle="pill" data-bs-target="#tab-voice" type="button">Voice & Audio</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="tab-theme-btn" data-bs-toggle="pill" data-bs-target="#tab-theme" type="button">Themes</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="tab-api-btn" data-bs-toggle="pill" data-bs-target="#tab-api" type="button">API & AI</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="tab-emergency-btn" data-bs-toggle="pill" data-bs-target="#tab-emergency" type="button">Emergency SOS</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="settingsTabContent">
+                        <!-- TAB 1: GENERAL -->
+                        <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Assistant Name</label>
+                                    <input type="text" id="cfgAssistantName" class="form-control cyber-input" value="Dragon">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Voice Wake Word</label>
+                                    <input type="text" id="cfgWakeWord" class="form-control cyber-input" value="dragon">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Emergency Safe Word</label>
+                                    <input type="text" id="cfgSafeWord" class="form-control cyber-input" value="help me">
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center pt-4">
+                                    <div class="form-check form-switch cyber-switch">
+                                        <input class="form-check-input" type="checkbox" id="cfgAutoListen">
+                                        <label class="form-check-label cyber-label" for="cfgAutoListen">Continuous Auto-Listen on Launch</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: VOICE & AUDIO -->
+                        <div class="tab-pane fade" id="tab-voice" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label cyber-label">Select Voice Model</label>
+                                    <select id="cfgVoiceIndex" class="form-select cyber-input">
+                                        <!-- Dynamically populated from Python system voices -->
+                                        <option value="0">Default Voice (0)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Speech Rate (Words/Min): <span id="valSpeechRate" class="text-neon">175</span></label>
+                                    <input type="range" class="form-range cyber-range" id="cfgSpeechRate" min="100" max="250" value="175">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Voice Volume: <span id="valSpeechVolume" class="text-neon">100%</span></label>
+                                    <input type="range" class="form-range cyber-range" id="cfgSpeechVolume" min="0.1" max="1.0" step="0.1" value="1.0">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch cyber-switch">
+                                        <input class="form-check-input" type="checkbox" id="cfgTtsEnabled" checked>
+                                        <label class="form-check-label cyber-label" for="cfgTtsEnabled">Enable Voice Spoken Responses</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: THEMES -->
+                        <div class="tab-pane fade" id="tab-theme" role="tabpanel">
+                            <label class="form-label cyber-label mb-3">Select Visual Theme Interface</label>
+                            <div class="row g-3">
+                                <div class="col-6 col-md-3">
+                                    <button type="button" class="theme-select-btn theme-btn-blue active" data-theme="cyber-blue">
+                                        <span class="theme-color-dot" style="background:#00f0ff;"></span>
+                                        Cyber Blue
+                                    </button>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <button type="button" class="theme-select-btn theme-btn-red" data-theme="crimson-dragon">
+                                        <span class="theme-color-dot" style="background:#ff2a5f;"></span>
+                                        Crimson Dragon
+                                    </button>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <button type="button" class="theme-select-btn theme-btn-green" data-theme="matrix-emerald">
+                                        <span class="theme-color-dot" style="background:#00ff88;"></span>
+                                        Matrix Emerald
+                                    </button>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <button type="button" class="theme-select-btn theme-btn-purple" data-theme="void-purple">
+                                        <span class="theme-color-dot" style="background:#b026ff;"></span>
+                                        Void Purple
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 4: API & AI -->
+                        <div class="tab-pane fade" id="tab-api" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label cyber-label">OpenAI API Key (Optional)</label>
+                                    <input type="password" id="cfgOpenAiKey" class="form-control cyber-input" placeholder="sk-...">
+                                    <div class="form-text text-muted">When provided, Dragon uses GPT for intelligent conversation beyond local commands.</div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label cyber-label">NewsAPI.org Key</label>
+                                    <input type="text" id="cfgNewsApiKey" class="form-control cyber-input" value="7e6cbb87a9934eb0813db23e14c914c6">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 5: EMERGENCY SOS -->
+                        <div class="tab-pane fade" id="tab-emergency" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Alert Sender Gmail</label>
+                                    <input type="email" id="cfgEmailSender" class="form-control cyber-input" placeholder="your_email@gmail.com">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label cyber-label">Gmail 16-Char App Password</label>
+                                    <input type="password" id="cfgEmailPass" class="form-control cyber-input" placeholder="16-character App Password">
+                                    <div class="form-text text-muted" style="font-size: 0.72rem;">Requires 2FA: <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-neon">Generate App Password</a></div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label cyber-label">Emergency Recipients (Comma-separated)</label>
+                                    <input type="text" id="cfgEmailRecipients" class="form-control cyber-input" placeholder="recipient1@gmail.com, recipient2@gmail.com">
+                                </div>
+                                <div class="col-md-12 d-flex align-items-center gap-2 mt-2">
+                                    <button type="button" class="cyber-btn cyber-btn-sm" id="btnTestEmail">
+                                        <i class="bi bi-shield-check"></i> Test Email Credentials
+                                    </button>
+                                    <span id="testEmailFeedback" class="small font-monospace"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer cyber-modal-footer">
+                    <span id="saveStatusFeedback" class="me-auto text-success d-none"><i class="bi bi-check-circle-fill"></i> Saved!</span>
+                    <button type="button" class="cyber-btn cyber-btn-primary" id="btnSaveSettings">
+                        <i class="bi bi-save"></i> Save Configuration
+                    </button>
+                    <button type="button" class="cyber-btn cyber-btn-ghost" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== EMERGENCY SOS FULLSCREEN OVERLAY ==================== -->
+    <div id="emergencyOverlay" class="emergency-overlay d-none">
+        <div class="emergency-box text-center p-4">
+            <div class="emergency-siren-icon animate__animated animate__heartBeat animate__infinite">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h2 class="emergency-title">EMERGENCY PROTOCOL ACTIVATED</h2>
+            <p class="emergency-desc">Capturing live GPS location & recording 8s emergency video via webcam...</p>
+            <div class="emergency-countdown-wrap my-3">
+                <span id="emergencyCountdown" class="countdown-digit">5</span>
+                <span class="countdown-unit">SECONDS UNTIL DISPATCH</span>
+            </div>
+            <div>
+                <button id="btnCancelEmergency" class="btn btn-outline-danger btn-lg px-4 fw-bold">
+                    <i class="bi bi-x-octagon-fill"></i> ABORT EMERGENCY PROTOCOL
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Local Vendor Scripts (Offline & Fast) -->
+    <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/jquery.min.js"></script>
+    <script src="assets/vendor/siriwave.umd.min.js"></script>
+    <!-- Eel Bridge -->
+    <script type="text/javascript" src="/eel.js"></script>
+    <!-- Application Scripts -->
+    <script src="controller.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
